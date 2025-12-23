@@ -1,0 +1,32 @@
+--Which companies have more than 10 weeks of maternity leave and have industry revenue of more than 100
+
+SELECT company_name, revenue, maternity_leave_weeks
+FROM fortune_companies
+WHERE revenue>100 AND maternity_leave_weeks>10
+ORDER BY revenue DESC;
+
+-- Revenue per employee
+SELECT company_name, (revenue/employees) AS revenue_per_employee
+FROM fortune_companies
+ORDER BY revenue_per_employee DESC;
+
+-- Average revenue of all industries that have healthcare
+SELECT industry, AVG(revenue) AS average_revenue
+FROM fortune_companies
+GROUP BY industry;
+
+--Company sizes by employee count
+SELECT company_name, employees,
+CASE WHEN employees >=1000000 THEN "Large"
+WHEN employees >=100000 THEN "Medium"
+ELSE "Small"
+END AS company_size
+FROM fortune_companies
+ORDER BY employees DESC;
+
+--Average revenue for small companies in industries that have healthcare_benefits and average revenue more than 10
+SELECT industry, AVG(revenue) AS average_revenue
+FROM fortune_companies
+GROUP BY industry
+HAVING average_revenue>10 AND healthcare_benefits=1
+ORDER BY average_revenue DESC;
