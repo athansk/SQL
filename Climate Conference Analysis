@@ -1,0 +1,50 @@
+--Climate Conference Project
+--Database: https://www.db-fiddle.com/f/pxMci1sLL945KHKYvpe9W6/1
+
+--Query 1: Get a list of all names and if they have made reservations.
+SELECT vips.last_name, vips.first_name, reservations.dinner_rsvp
+FROM vips
+LEFT JOIN reservations
+ON vips.member_id=reservations.member_id
+ORDER BY vips.last_name;
+
+--Query 2: Get a list of the vips who will participate in the events
+SELECT vips.last_name, vips.first_name, events.event_name
+FROM vips
+INNER JOIN events
+ON vips.event=events.event_id;
+
+--Query 3: Get a list of the hotels the vips will be in.
+SELECT vips.last_name, vips.first_name, hotels.hotel_name
+FROM vips
+INNER JOIN reservations
+ON vips.member_id=reservations.member_id
+INNER JOIN hotels
+ON reservations.hotel=hotels.hotel_id
+ORDER BY hotels.hotel_name;
+
+--Query 4: Get a list of people and the ones they provide feedback to (just last names)
+SELECT feedback_from.last_name AS feedback_from, feedback_to.last_name AS feedback_to
+FROM vips feedback_from
+INNER JOIN vips feedback_to
+ON feedback_from.provides_feedback_to=feedback_to.member_id
+ORDER BY feedback_from.last_name;
+
+--Query 5: Find out who stays at the hotel with the least reservations
+SELECT vips.first_name, vips.last_name, hotels.hotel_name
+FROM vips
+JOIN reservations ON vips.member_id = reservations.member_id
+JOIN hotels ON reservations.hotel = hotels.hotel_id
+WHERE reservations.hotel = (
+    SELECT hotel 
+    FROM reservations 
+    GROUP BY hotel 
+    ORDER BY COUNT(*) ASC
+    LIMIT 1);
+    
+--Query 6: Find the number of vips attending each event
+SELECT events.event_name, COUNT(vips.member_id) AS attendee_count
+FROM events
+LEFT JOIN vips ON events.event_id = vips.event
+GROUP BY events.event_name
+ORDER BY attendee_count DESC;
